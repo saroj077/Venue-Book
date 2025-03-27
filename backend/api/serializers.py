@@ -34,14 +34,14 @@ class NoteSerializer(serializers.ModelSerializer):
 
 class UserSerializers(serializers.ModelSerializer):
 
-    is_venue_owner = serializers.BooleanField(write_only=True)
+    is_venue_owner = serializers.BooleanField()
     email = serializers.CharField(
-        write_only=True, required=True)
+        required=True)
     username = serializers.CharField(
-        write_only=True, required=True)
+        required=True)
     address = serializers.CharField(
-        write_only=True, required=False)  # or TextField if needed
-    phoneNumber = serializers.CharField(write_only=True, required=False)
+        required=False)  # or TextField if needed
+    phoneNumber = serializers.CharField(required=False)
 
     class Meta:
         model = UserProfile

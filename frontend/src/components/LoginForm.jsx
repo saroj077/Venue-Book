@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../api";
+
 import { Link, useNavigate } from "react-router-dom";
 import { FaUser, FaEye, FaEyeSlash, FaLock } from "react-icons/fa";
 import { AiOutlineGoogle } from "react-icons/ai";
@@ -28,21 +29,43 @@ function L_Form({ route, redirectTo }) {
 
       localStorage.setItem(ACCESS_TOKEN, res.data.access);
       localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.access}`;
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${res.data.access}`;
 
-      const response = await axios.get(`/api/userProfile/${username}/`);
-      if (response.data.is_venue_owner) {
-        navigate("/venue");
-      } else {
-        navigate("/");
+      // Add comprehensive logging
+      console.log("Attempting to fetch user profile");
+      console.log("Username:", username);
+
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/api/userProfiles/${username}/`
+        );
+
+        console.log("Response data:", response.data);
+        console.log("Response status:", response.status);
+
+        // Check if response.data exists and has is_venue_owner
+
+        if (response.data.is_venue_owner) {
+          navigate("/venue");
+        } else {
+          navigate("/");
+        }
+      } catch (fetchError) {
+        console.error("Fetch error:", fetchError);
+        console.error("Fetch error response:", fetchError.response);
+        alert(
+          fetchError.response?.data?.error || "Error fetching user profile"
+        );
       }
     } catch (error) {
-      setError("Login failed. Please try again.");
+      console.error("Login error:", error);
+      alert(error.response?.data?.error || "Login failed");
     } finally {
       setLoading(false);
     }
   };
-
   return (
     <div className="auth-container">
       <div className="auth-left">

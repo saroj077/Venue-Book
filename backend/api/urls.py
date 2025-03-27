@@ -8,6 +8,8 @@ urlpatterns = [
     path("notes/delete/<int:pk>/", views.NoteDelete.as_view(), name="delete-note"),
     path('register/', views.UserProfileViewSet.as_view(), name='register'),
     path("userDetails/", views.ShowProfile.as_view(), name="user-detail"),
-    path('userProfile/', views.get_user_profile,
-         name='compare_username'),
+    path('userProfiles/', views.UserProfileDetailView.as_view(),
+         name='user-profile'),
+    path('userProfiles/<str:username>/', views.UserProfileDetailView.as_view(),
+         name='user-profile'),
 ]
