@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "api",
     "rest_framework",
     "corsheaders",
+    
 ]
 
 MIDDLEWARE = [
@@ -99,11 +100,12 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "venuebook",
-        "USER": "reeya",
-        "PASSWORD": "2002",
-        "HOST": "127.0.0.1",
+        "NAME": "reeya",
+        "USER": "postgres",
+        "PASSWORD": "20600703",
+        "HOST": "localhost",
         "PORT": "5432",
+
     }
 }
 
