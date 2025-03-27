@@ -50,7 +50,7 @@ function L_Form({ route, redirectTo }) {
         if (response.data.is_venue_owner) {
           navigate("/venue");
         } else {
-          navigate("/");
+          navigate("/home");
         }
       } catch (fetchError) {
         console.error("Fetch error:", fetchError);

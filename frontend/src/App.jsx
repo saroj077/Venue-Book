@@ -34,7 +34,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Redirect from "/" to "/home" */}
-        <Route path="/" element={<HomePage />} /> {/* Set HomePage as the initial page */}
+         {/* Set HomePage as the initial page */}
 
         {/* Home route */}
         <Route
@@ -57,6 +57,7 @@ function App() {
         />
 
         {/* Login route */}
+        <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
 
         {/* Logout route */}
