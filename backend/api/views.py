@@ -1,3 +1,5 @@
+from rest_framework.permissions import AllowAny
+from rest_framework import status
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics, status
@@ -16,17 +18,6 @@ from django.views.decorators.http import require_GET
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 
-
-def get_user_profile(request, username):
-    try:
-        # Get the user profile based on username
-        user_profile = UserProfile.objects.get(username=username)
-    except UserProfile.DoesNotExist:
-        raise Http404("User profile not found")
-
-    # You can now use `user_profile` in your view logic
-    # For example, pass it to a template:
-    return render(request, 'profile_detail.html', {'user_profile': user_profile})
 
 class ShowProfile(APIView):
     permission_classes = [IsAuthenticated]
@@ -70,3 +61,28 @@ class UserProfileViewSet(generics.CreateAPIView):
     queryset = UserProfile.objects.all()
     serializer_class = UserSerializers
     permission_classes = [AllowAny]
+
+
+class UserProfileDetailView(APIView):
+    """
+    View to retrieve a specific user profile by username.
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request, username, *args, **kwargs):
+        try:
+            # Retrieve the user profile by username
+            user_profile = get_object_or_404(UserProfile, username=username)
+            
+            # Serialize the user profile
+            serializer = UserSerializers(user_profile)
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            # Log the error for debugging
+            print(f"Error retrieving user profile for username {username}: {str(e)}")
+            return Response(
+                {"error": f"Unable to retrieve profile for username {username}"},
+                status=status.HTTP_404_NOT_FOUND
+            )
