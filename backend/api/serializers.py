@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Note, UserProfile
+from .models import Note, UserProfile, Venue
 
 
 class showProfileSerializer(serializers.ModelSerializer):
@@ -47,3 +47,20 @@ class UserSerializers(serializers.ModelSerializer):
         model = UserProfile
         fields = ['username', 'email',
                   'address', 'phoneNumber', 'is_venue_owner']
+
+
+
+
+class VenueSerializer(serializers.ModelSerializer):
+    venueid = serializers.IntegerField(read_only=True)
+    venuename = serializers.CharField(required=True)
+    venueaddress = serializers.CharField(required=True)
+    review = serializers.CharField(required=False)
+    features = serializers.CharField(required=False)
+    status = serializers.BooleanField(default=True)
+    description = serializers.CharField(required=False)
+    imageurl = serializers.JSONField(required=False)  # Allows storing a JSON array of image URLs
+
+    class Meta:
+        model = Venue
+        fields = ['venueid', 'venuename', 'venueaddress', 'review', 'features', 'status', 'description', 'imageurl']

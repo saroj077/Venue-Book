@@ -3,7 +3,8 @@ from rest_framework import status
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics, status
-from .serializers import UserSerializer, NoteSerializer, UserSerializers, showProfileSerializer
+from .serializers import UserSerializer, NoteSerializer, UserSerializers, showProfileSerializer, VenueSerializer
+from .models import Note, UserProfile, Venue
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -85,4 +86,25 @@ class UserProfileDetailView(APIView):
             return Response(
                 {"error": f"Unable to retrieve profile for username {username}"},
                 status=status.HTTP_404_NOT_FOUND
+            )
+
+class VenueViewSet(APIView):
+    permission_classes = [AllowAny]  # Allow public access (adjust as needed)
+
+    def get(self, request, *args, **kwargs):
+        try:
+            # Retrieve all venues
+            venues = Venue.objects.all()
+            
+            # Serialize the venue queryset
+            serializer = VenueSerializer(venues, many=True)
+            
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            # Log the error for debugging (optional)
+            print(f"Error retrieving venues: {str(e)}")
+            return Response(
+                {"error": "Unable to retrieve venue list"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )

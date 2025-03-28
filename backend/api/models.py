@@ -24,3 +24,23 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+from django.db import models
+
+class Venue(models.Model):
+    venueid = models.AutoField(primary_key=True)  # Assuming venueid is the primary key
+    venuename = models.CharField(max_length=255)
+    venueaddress = models.CharField(max_length=255)
+    review = models.TextField()
+    features = models.TextField()  # Store comma-separated or detailed features as a string
+    status = models.BooleanField(default=True)
+    description = models.TextField()
+    imageurl = models.JSONField()  # Requires PostgreSQL JSON type compatibility
+
+    class Meta:
+        db_table = 'venue'  # Explicitly map to the 'venue' table in the database
+        managed = True 
+
+    def __str__(self):
+        return self.venuename
