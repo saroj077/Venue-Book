@@ -3,6 +3,9 @@ from rest_framework.routers import DefaultRouter
 from . import views
 
 
+router = DefaultRouter()
+router.register(r'venues', views.VenueViewSet, basename='venue')
+
 urlpatterns = [
     path("notes/", views.NoteListCreate.as_view(), name="note-list"),
     path("notes/delete/<int:pk>/", views.NoteDelete.as_view(), name="delete-note"),
@@ -12,4 +15,6 @@ urlpatterns = [
          name='user-profile'),
     path('userProfiles/<str:username>/', views.UserProfileDetailView.as_view(),
          name='user-profile'),
+     path('venue/', views.VenueViewSet.as_view(),
+         name='venue-profile'),
 ]
