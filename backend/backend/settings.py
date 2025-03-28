@@ -153,3 +153,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWS_CREDENTIALS = True
+
+# ESEWA_MERCHANT_ID = "EPAYTEST"
+# ESEWA_SECRET_KEY = "8gBm/:&EnhH.1/q"
+# ESEWA_VERIFY_URL = "https://rc.esewa.com.np/api/epay/transaction/status/?product_code=EPAYTEST&total_amount=100&transaction_uuid=123"
