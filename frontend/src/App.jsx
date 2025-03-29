@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RegisterVenue from "./pages/RegisterVenue/RegisterVenue";
 import HomePage from './Pages/Home/HomePage';
+import VenueDetails from "./pages/VenueDetails/VenueDetails";
 
 function Logout() {
   localStorage.clear();
@@ -68,6 +69,10 @@ function App() {
 
         {/* RegisterVenue route */}  
         <Route path='/register-venue' element={<RegisterVenue />} />
+
+
+        <Route path="/venue-details/:venueId" element={<VenueDetails />} />
+
 
 
         {/* Not Found route */}

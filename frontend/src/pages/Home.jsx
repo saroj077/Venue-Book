@@ -1,122 +1,83 @@
 import { useState, useEffect } from "react";
-import api from "../api";
-import Note from "../components/Note";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../styles/Home.css";
+import { FaMapMarkerAlt, FaArrowRight } from "react-icons/fa";
+import '../styles/Home.css';
 
 function Home() {
-  const [notes, setNotes] = useState([]);
-  const [userData, setUserData] = useState(null);
-  const [content, setContent] = useState("");
-  const [title, setTitle] = useState("");
-  const [error, setError] = useState(null);
+  const [venues, setVenues] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
+  const navigate = useNavigate();
 
   useEffect(() => {
-    getNotes();
-  }, []);
-
-  const getNotes = () => {
-    api
-      .get("/api/notes/")
-      .then((res) => res.data)
-      .then((data) => {
-        setNotes(data);
-        console.log(data);
-      })
-      .catch((err) => alert(err));
-  };
-
-  const deleteNote = (id) => {
-    api
-      .delete(`/api/notes/delete/${id}/`)
-      .then((res) => {
-        if (res.status === 204) alert("Note deleted!");
-        else alert("Failed to delete note.");
-        getNotes();
-      })
-      .catch((error) => alert(error));
-  };
-
-  const createNote = (e) => {
-    e.preventDefault();
-    api
-      .post("/api/notes/", { content, title })
-      .then((res) => {
-        if (res.status === 201) alert("Note created!");
-        else alert("Failed to make note.");
-        getNotes();
-      })
-      .catch((err) => alert(err));
-  };
-
-  useEffect(() => {
-    // Fetch user data when component mounts
-    const fetchUserData = async () => {
+    const fetchVenues = async () => {
       try {
-        // Get access token from local storage (assuming you're using JWT)
-
-        // Fetch user profile
-        const response = await api.get("/api/userDetails/");
-
-        setUserData(response.data);
+        const response = await axios.get("http://127.0.0.1:8000/api/venues/");
+        setVenues(response.data);
         setLoading(false);
       } catch (err) {
         setError(err.message);
         setLoading(false);
       }
     };
-
-    fetchUserData();
+    fetchVenues();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  const handleVenueClick = (venueId) => {
+    navigate(`/venue-details/${venueId}`);
+  };
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const currentVenues = venues.slice(0, indexOfLastItem);
+  const hasMore = venues.length > indexOfLastItem;
+
+  if (loading) return <div className="loading">Loading venues...</div>;
+  if (error) return <div className="error">Error: {error}</div>;
 
   return (
-    <div>
-      <div>
-        <h2>User Profile</h2>
-        {userData && (
-          <div>
-            <p>Username: {userData.username}</p>
-            <p>Email: {userData.email}</p>
-            <p>
-              Name: {userData.first_name} {userData.last_name}
-            </p>
+    <div className="home-container">
+      <h1 className="section-title">Discover Stunning Venues</h1>
+      
+      <div className="venue-grid">
+        {currentVenues.map((venue) => (
+          <div 
+            key={venue.venueid} 
+            className="venue-card"
+            onClick={() => handleVenueClick(venue.venueid)}
+          >
+            <div className="image-container">
+              <img 
+                src={venue.imageurl?.[0] || 'https://via.placeholder.com/350x240'} 
+                alt={venue.venuename} 
+                className="venue-image" 
+              />
+              <div className="price-badge">From Rs.{venue.starting_price}</div>
+            </div>
+
+            <div className="venue-content">
+              <h3 className="venue-title">{venue.venuename}</h3>
+              <p className="venue-address">
+                {venue.venueaddress}
+              </p>
+              <button className="book-now-btn">
+                Book Now <FaArrowRight />
+              </button>
+            </div>
           </div>
-        )}
-      </div>
-      <div>
-        <h2>Notes</h2>
-        {notes.map((note) => (
-          <Note note={note} onDelete={deleteNote} key={note.id} />
         ))}
       </div>
-      <h2>Create a Note</h2>
-      <form onSubmit={createNote}>
-        <label htmlFor="title">Title:</label>
-        <br />
-        <input
-          type="text"
-          id="title"
-          name="title"
-          required
-          onChange={(e) => setTitle(e.target.value)}
-          value={title}
-        />
-        <label htmlFor="content">Content:</label>
-        <br />
-        <textarea
-          id="content"
-          name="content"
-          required
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        ></textarea>
-        <br />
-        <input type="submit" value="Submit"></input>
-      </form>
+
+      {hasMore && (
+        <button 
+          className="show-more-btn" 
+          onClick={() => setCurrentPage(prev => prev + 1)}
+        >
+          Show More Venues
+        </button>
+      )}
     </div>
   );
 }

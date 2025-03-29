@@ -15,6 +15,5 @@ urlpatterns = [
          name='user-profile'),
     path('userProfiles/<str:username>/', views.UserProfileDetailView.as_view(),
          name='user-profile'),
-     path('venue/', views.VenueViewSet.as_view(),
-         name='venue-profile'),
+    path('',include(router.urls))
 ]
