@@ -88,23 +88,31 @@ class UserProfileDetailView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-class VenueViewSet(APIView):
-    permission_classes = [AllowAny]  # Allow public access (adjust as needed)
+class VenueViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]  
+    
+    queryset=Venue.objects.all()
+    serializer_class = VenueSerializer
+    
+    
+    
+    
+    # Allow public access (adjust as needed)
 
-    def get(self, request, *args, **kwargs):
-        try:
-            # Retrieve all venues
-            venues = Venue.objects.all()
+    # def get(self, request, *args, **kwargs):
+    #     try:
+    #         # Retrieve all venues
+    #         venues = Venue.objects.all()
             
-            # Serialize the venue queryset
-            serializer = VenueSerializer(venues, many=True)
+    #         # Serialize the venue queryset
+    #         serializer = VenueSerializer(venues, many=True)
             
-            return Response(serializer.data, status=status.HTTP_200_OK)
+    #         return Response(serializer.data, status=status.HTTP_200_OK)
         
-        except Exception as e:
-            # Log the error for debugging (optional)
-            print(f"Error retrieving venues: {str(e)}")
-            return Response(
-                {"error": "Unable to retrieve venue list"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+    #     except Exception as e:
+    #         # Log the error for debugging (optional)
+    #         print(f"Error retrieving venues: {str(e)}")
+    #         return Response(
+    #             {"error": "Unable to retrieve venue list"},
+    #             status=status.HTTP_500_INTERNAL_SERVER_ERROR
+    #         )
