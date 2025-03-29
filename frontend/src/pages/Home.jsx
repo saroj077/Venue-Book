@@ -1,8 +1,9 @@
+//Home.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FaMapMarkerAlt, FaArrowRight } from "react-icons/fa";
-import '../styles/Home.css';
+import { FaArrowRight } from "react-icons/fa";
+import "../styles/Home.css";
 
 function Home() {
   const [venues, setVenues] = useState([]);
@@ -40,40 +41,44 @@ function Home() {
   return (
     <div className="home-container">
       <h1 className="section-title">Discover Stunning Venues</h1>
-      
+
       <div className="venue-grid">
         {currentVenues.map((venue) => (
-          <div 
-            key={venue.venueid} 
+          <div
+            key={venue.venueid}
             className="venue-card"
             onClick={() => handleVenueClick(venue.venueid)}
           >
             <div className="image-container">
-              <img 
-                src={venue.imageurl?.[0] || 'https://via.placeholder.com/350x240'} 
-                alt={venue.venuename} 
-                className="venue-image" 
+              <img
+                src={
+                  venue.imageurl?.[0] || "https://via.placeholder.com/350x240"
+                }
+                alt={venue.venuename}
+                className="venue-image"
               />
               <div className="price-badge">From Rs.{venue.starting_price}</div>
             </div>
 
             <div className="venue-content">
-              <h3 className="venue-title">{venue.venuename}</h3>
-              <p className="venue-address">
-                {venue.venueaddress}
-              </p>
-              <button className="book-now-btn">
-                Book Now <FaArrowRight />
-              </button>
+              <div className="text-container">
+                <h3 className="venue-title">{venue.venuename}</h3>
+                <p className="venue-address">{venue.venueaddress}</p>
+              </div>
+              <div className="button-container">
+                <button className="book-now-btn">
+                  Book Now <FaArrowRight />
+                </button>
+              </div>
             </div>
           </div>
         ))}
       </div>
 
       {hasMore && (
-        <button 
-          className="show-more-btn" 
-          onClick={() => setCurrentPage(prev => prev + 1)}
+        <button
+          className="show-more-btn"
+          onClick={() => setCurrentPage((prev) => prev + 1)}
         >
           Show More Venues
         </button>
