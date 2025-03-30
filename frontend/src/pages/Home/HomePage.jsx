@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link for navigation
-import { motion } from 'framer-motion'; // Add this import
-import { FaSearch, FaMapMarkerAlt, FaUsers, FaCalendarAlt } from 'react-icons/fa'; // Add this import
+import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { FaSearch, FaMapMarkerAlt, FaUsers, FaCalendarAlt, FaArrowRight } from 'react-icons/fa';
+import axios from 'axios';
 import heroBackground from '../../assets/banner.jpg';
 import './HomePage.css';
 
@@ -28,16 +29,33 @@ const features = [
 const HomePage = () => {
     const [venues, setVenues] = useState([]);
     const [isVisible, setIsVisible] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchVenues = async () => {
-            const response = await fetch('http://127.0.0.1:8000/api/venues/'); // Update the URL if necessary
-            const data = await response.json();
-            setVenues(data);
+            try {
+                const response = await axios.get("http://127.0.0.1:8000/api/venues/");
+                setVenues(response.data);
+            } catch (err) {
+                console.error("Error fetching venues:", err);
+            }
         };
-
         fetchVenues();
     }, []);
+
+    const handleVenueClick = (venueId) => {
+        const isAuthenticated = localStorage.getItem('access');
+        
+        if (!isAuthenticated) {
+            navigate('/login', { 
+                state: { 
+                    message: 'Please sign in first to view venue details.' 
+                } 
+            });
+        } else {
+            navigate(`/venue-details/${venueId}`);
+        }
+    }; 
 
     useEffect(() => {
         setIsVisible(true);
@@ -110,34 +128,43 @@ const HomePage = () => {
 
             {/* Enhanced Venue Cards Section */}
             <section className="venue-list">
-                <h2>Popular Venues</h2>
-                <div className="venue-cards-wrapper">
-                    <div className="venue-cards">
-                        {venues.slice(0, 4).map((venue, index) => (
-                            <motion.div
-                                className="venue-card"
-                                key={venue.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.2 }}
-                            >
-                                <div className="venue-image-container">
-                                    <img src={venue.image} alt={venue.name} />
-                                    <div className="venue-overlay">
-                                        <button className="book-now-button">Book Now</button>
-                                    </div>
+                <h2 className="section-title">Popular Venues</h2>
+                <div className="venue-grid">
+                    {venues.slice(0, 4).map((venue) => (
+                        <motion.div
+                            key={venue.venueid}
+                            className="venue-card"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3 }}
+                            onClick={() => handleVenueClick(venue.venueid)}
+                        >
+                            <div className="image-container">
+                                <img
+                                    src={venue.imageurl?.[0] || heroBackground}
+                                    alt={venue.venuename}
+                                    className="venue-image"
+                                />
+                                <div className="price-badge">
+                                    From Rs.{venue.starting_price}
                                 </div>
-                                <div className="venue-info">
-                                    <h3>{venue.name}</h3>
-                                    <p><FaMapMarkerAlt /> {venue.location}</p>
-                                    <div className="venue-details">
-                                        <span className="price">From ${venue.price}</span>
-                                        <span className="rating">★ 4.5</span>
-                                    </div>
+                            </div>
+
+                            <div className="venue-content">
+                                <div className="text-container">
+                                    <h3 className="venue-title">{venue.venuename}</h3>
+                                    <p className="venue-address">
+                                        <FaMapMarkerAlt /> {venue.venueaddress}
+                                    </p>
                                 </div>
-                            </motion.div>
-                        ))}
-                    </div>
+                                <div className="button-container">
+                                    <button className="book-now-btn">
+                                        Book Now <FaArrowRight />
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    ))}
                 </div>
             </section>
 
