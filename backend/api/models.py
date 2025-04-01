@@ -28,22 +28,26 @@ class UserProfile(models.Model):
 
 from django.db import models
 
+from django.contrib.auth.models import User  # Import User model
+
 class Venue(models.Model):
-    venueid = models.AutoField(primary_key=True)  # Assuming venueid is the primary key
+    venueid = models.AutoField(primary_key=True)
     venuename = models.CharField(max_length=255)
     venueaddress = models.CharField(max_length=255)
     review = models.TextField()
-    features = models.TextField()  # Store comma-separated or detailed features as a string
+    features = models.TextField()
     status = models.BooleanField(default=True)
     description = models.TextField()
-    imageurl = models.JSONField()  # Requires PostgreSQL JSON type compatibility
+    imageurl = models.JSONField()
+    venueownerid = models.ForeignKey(User, on_delete=models.CASCADE, default=3)   # New field
 
     class Meta:
-        db_table = 'api_venue'  # Explicitly map to the 'venue' table in the database
-        managed = True 
+        db_table = 'api_venue'
+        managed = True
 
     def __str__(self):
         return self.venuename
+
     
 class Booking(models.Model):
     user=models.ForeignKey(User, on_delete=models.CASCADE,default=1)
