@@ -90,7 +90,6 @@ class UserProfileDetailView(APIView):
 
 class VenueViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]  
-    
     queryset=Venue.objects.all()
     serializer_class = VenueSerializer
     

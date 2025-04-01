@@ -59,10 +59,11 @@ class VenueSerializer(serializers.ModelSerializer):
     status = serializers.BooleanField(default=True)
     description = serializers.CharField(required=False)
     imageurl = serializers.JSONField(required=False)  # Allows storing a JSON array of image URLs
+    venueownerid = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())  # If using ForeignKey
 
     class Meta:
         model = Venue
-        fields = ['venueid', 'venuename', 'venueaddress', 'review', 'features', 'status', 'description', 'imageurl']
+        fields = ['venueid', 'venuename', 'venueaddress', 'review', 'features', 'status', 'description', 'imageurl', 'venueownerid']
 
 
 class BookingSerializer(serializers.ModelSerializer):
