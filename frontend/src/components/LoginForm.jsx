@@ -1,6 +1,6 @@
 import { useState } from "react";
 import api from "../api";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaUser, FaEye, FaEyeSlash, FaLock } from "react-icons/fa";
 import { AiOutlineGoogle } from "react-icons/ai";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
@@ -16,6 +16,8 @@ function L_Form({ route, redirectTo }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+  const message = location.state?.message;
 
   const name = "Login";
 
@@ -48,7 +50,7 @@ function L_Form({ route, redirectTo }) {
         // Check if response.data exists and has is_venue_owner
 
         if (response.data.is_venue_owner) {
-          navigate("/venue");
+          navigate("/register-venue");
         } else {
           navigate("/home");
         }
@@ -95,6 +97,11 @@ function L_Form({ route, redirectTo }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
+                              {message && (
+                        <div className="auth-message">
+                            ⚠️ {message}
+                        </div>
+                    )}
           <h2>{name} your Account</h2>
           <p className="auth-subtitle">It's quick and easy.</p>
 
