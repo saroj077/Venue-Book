@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Note, UserProfile, Venue
+from .models import Note, UserProfile, Venue, Booking
 
 
 class showProfileSerializer(serializers.ModelSerializer):
@@ -33,6 +33,8 @@ class NoteSerializer(serializers.ModelSerializer):
 
 
 class UserSerializers(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+
 
     is_venue_owner = serializers.BooleanField()
     email = serializers.CharField(
@@ -45,11 +47,8 @@ class UserSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ['username', 'email',
+        fields = ['id','username', 'email',
                   'address', 'phoneNumber', 'is_venue_owner']
-
-
-
 
 class VenueSerializer(serializers.ModelSerializer):
     venueid = serializers.IntegerField(read_only=True)
@@ -64,3 +63,26 @@ class VenueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Venue
         fields = ['venueid', 'venuename', 'venueaddress', 'review', 'features', 'status', 'description', 'imageurl']
+
+
+class BookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Booking
+        fields = "__all__"
+
+    def validate(self, data):
+        venue = data["venue"]
+        start_date = data["start_date"]
+        end_date = data["end_date"]
+
+        # Check for conflicting bookings
+        existing_booking = Booking.objects.filter(
+            venue=venue,
+            start_date__lte=end_date,
+            end_date__gte=start_date
+        ).exists()
+
+        if existing_booking:
+            raise serializers.ValidationError("This venue is already booked for the selected dates.")
+
+        return data

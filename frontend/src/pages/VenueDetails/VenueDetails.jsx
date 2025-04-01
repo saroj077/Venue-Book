@@ -12,11 +12,42 @@ function VenueDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+    const handleBooking = async () => {
+      try {
+        const userToken = localStorage.getItem("access");
+        
+        if (!userToken) {
+          alert("Please log in to book a venue.");
+          return;
+        }
+          const userProfile = JSON.parse(localStorage.getItem("userProfile"));
+          console.log(start_date, end_date);
+          const response = await axios.post("http://127.0.0.1:8000/api/bookings/", {
+            user: userProfile.id,
+            venue: venueId,
+            start_date:start_date,
+            end_date:end_date,
+          }, {
+            headers: {
+              Authorization: `Bearer ${userToken}`
+            },
+          });
+        alert("Booking confirmed!");
+      } catch (response) {
+        alert(error.response.data.detail || "Booking failed!");
+      }
+    
+    };
+  const [start_date, setStartDate] = useState("");
+  const [end_date, setEndDate] = useState("");  
+
+
+
   useEffect(() => {
     const fetchVenue = async () => {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/api/venues/${venueId}/`
+          `http://127.0.0.1:8000/api/venue/${venueId}/`
         );
         setVenue(response.data);
         setLoading(false);
@@ -28,9 +59,12 @@ function VenueDetails() {
     fetchVenue();
   }, [venueId]);
 
+  
   if (loading) return <div>Loading venue details...</div>;
   if (error) return <div>Error: {error}</div>;
   if (!venue) return <div>Venue not found</div>;
+
+
 
   return (
     <div className="venue-details-container">
@@ -77,11 +111,11 @@ function VenueDetails() {
           <div className="form-row">
             <div className="form-group">
               <label>Start Date:</label>
-              <input type="date" />
+              <input type="date" value={start_date} onChange={(e) => setStartDate(e.target.value)}/>
             </div>
             <div className="form-group">
               <label>End Date:</label>
-              <input type="date" />
+              <input type="date" value={end_date} onChange={(e) => setEndDate(e.target.value)}/>
             </div>
           </div>
           
@@ -91,7 +125,7 @@ function VenueDetails() {
             <small>(Max Capacity: {venue.capacity})</small>
           </div>
           
-          <button className="submit-button">Confirm Booking</button>
+          <button className="submit-button" onClick={handleBooking}>Confirm Booking</button>
         </div>
       </div>
     </div>

@@ -43,6 +43,7 @@ function L_Form({ route, redirectTo }) {
 
         console.log("Response data:", response.data);
         console.log("Response status:", response.status);
+        localStorage.setItem("userProfile", JSON.stringify(response.data));
 
         // Check if response.data exists and has is_venue_owner
 

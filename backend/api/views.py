@@ -3,8 +3,8 @@ from rest_framework import status
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics, status
-from .serializers import UserSerializer, NoteSerializer, UserSerializers, showProfileSerializer, VenueSerializer
-from .models import Note, UserProfile, Venue
+from .serializers import UserSerializer, NoteSerializer, UserSerializers, showProfileSerializer, VenueSerializer, BookingSerializer
+from .models import Note, UserProfile, Venue, Booking
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -95,24 +95,7 @@ class VenueViewSet(viewsets.ModelViewSet):
     serializer_class = VenueSerializer
     
     
-    
-    
-    # Allow public access (adjust as needed)
-
-    # def get(self, request, *args, **kwargs):
-    #     try:
-    #         # Retrieve all venues
-    #         venues = Venue.objects.all()
-            
-    #         # Serialize the venue queryset
-    #         serializer = VenueSerializer(venues, many=True)
-            
-    #         return Response(serializer.data, status=status.HTTP_200_OK)
-        
-    #     except Exception as e:
-    #         # Log the error for debugging (optional)
-    #         print(f"Error retrieving venues: {str(e)}")
-    #         return Response(
-    #             {"error": "Unable to retrieve venue list"},
-    #             status=status.HTTP_500_INTERNAL_SERVER_ERROR
-    #         )
+class BookingViewSet(viewsets.ModelViewSet):
+    queryset = Booking.objects.all()
+    serializer_class = BookingSerializer
+    permission_classes = [IsAuthenticated]

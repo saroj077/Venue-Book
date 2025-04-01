@@ -59,6 +59,8 @@ INSTALLED_APPS = [
     "api",
     "rest_framework",
     "corsheaders",
+    'khalti',
+
     
 ]
 
@@ -102,7 +104,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "Venue",
         "USER": "postgres",
-        "PASSWORD": "saroj",
+        "PASSWORD": "Aayush12@",
         "HOST": "localhost",
         "PORT": "5432",
 
