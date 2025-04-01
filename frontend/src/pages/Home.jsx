@@ -16,7 +16,7 @@ function Home() {
   useEffect(() => {
     const fetchVenues = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/venues/");
+        const response = await axios.get("http://127.0.0.1:8000/api/venue/");
         setVenues(response.data);
         setLoading(false);
       } catch (err) {

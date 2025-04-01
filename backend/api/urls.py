@@ -4,7 +4,9 @@ from . import views
 
 
 router = DefaultRouter()
-router.register(r'venues', views.VenueViewSet, basename='venue')
+router.register(r'venue', views.VenueViewSet, basename='venue')
+router.register(r'bookings', views.BookingViewSet)
+
 
 urlpatterns = [
     path("notes/", views.NoteListCreate.as_view(), name="note-list"),

@@ -15,7 +15,7 @@ class Note(models.Model):
         return self.title
 
 
-class UserProfile(models.Model):
+class UserProfile(models.Model): 
     username = models.TextField(blank=True, null=True)
     email = models.EmailField(max_length=254, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
@@ -39,8 +39,20 @@ class Venue(models.Model):
     imageurl = models.JSONField()  # Requires PostgreSQL JSON type compatibility
 
     class Meta:
-        db_table = 'venue'  # Explicitly map to the 'venue' table in the database
+        db_table = 'api_venue'  # Explicitly map to the 'venue' table in the database
         managed = True 
 
     def __str__(self):
         return self.venuename
+    
+class Booking(models.Model):
+    user=models.ForeignKey(User, on_delete=models.CASCADE,default=1)
+    venue = models.ForeignKey("Venue", on_delete=models.CASCADE)
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+    class Meta:
+        unique_together = ("venue", "start_date", "end_date")
+
+    def __str__(self):
+        return f"{self.username} booked {self.venue.venuename} from {self.start_date} to {self.end_date}"
