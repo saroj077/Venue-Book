@@ -39,7 +39,10 @@ class Venue(models.Model):
     status = models.BooleanField(default=True)
     description = models.TextField()
     imageurl = models.JSONField()
-    venueownerid = models.ForeignKey(User, on_delete=models.CASCADE, default=3)   # New field
+    venueownerid = models.ForeignKey(User, on_delete=models.CASCADE, default=3)
+    min_price = models.DecimalField(max_digits=10, decimal_places=2, default=100)  # New field for minimum price
+    max_price = models.DecimalField(max_digits=10, decimal_places=2, default=500)  # New field for maximum price
+    max_capacity = models.IntegerField(default=100)
 
     class Meta:
         db_table = 'api_venue'
@@ -47,6 +50,7 @@ class Venue(models.Model):
 
     def __str__(self):
         return self.venuename
+
 
     
 class Booking(models.Model):

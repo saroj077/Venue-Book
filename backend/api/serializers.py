@@ -35,7 +35,6 @@ class NoteSerializer(serializers.ModelSerializer):
 class UserSerializers(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
 
-
     is_venue_owner = serializers.BooleanField()
     email = serializers.CharField(
         required=True)
@@ -47,29 +46,57 @@ class UserSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ['id','username', 'email',
+        fields = ['id', 'username', 'email',
                   'address', 'phoneNumber', 'is_venue_owner']
 
+
 class VenueSerializer(serializers.ModelSerializer):
-    venueid = serializers.IntegerField(read_only=True)
-    venuename = serializers.CharField(required=True)
-    venueaddress = serializers.CharField(required=True)
-    review = serializers.CharField(required=False)
-    features = serializers.CharField(required=False)
-    status = serializers.BooleanField(default=True)
-    description = serializers.CharField(required=False)
-    imageurl = serializers.JSONField(required=False)  # Allows storing a JSON array of image URLs
-    venueownerid = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())  # If using ForeignKey
+    booked_dates = serializers.SerializerMethodField()
 
     class Meta:
         model = Venue
-        fields = ['venueid', 'venuename', 'venueaddress', 'review', 'features', 'status', 'description', 'imageurl', 'venueownerid']
+        fields = ['venueid', 'venuename', 'venueaddress', 'review', 'features',
+                  'status', 'description', 'imageurl', 'venueownerid', 'min_price', 'max_price', 'max_capacity', 'booked_dates']
+
+    def get_booked_dates(self, obj):
+        bookings = Booking.objects.filter(venue=obj).select_related('user')
+
+        booked_data = []
+        for booking in bookings:
+            try:
+                user_profile = UserProfile.objects.get(id=booking.user.id)
+                user_info = {
+                    "username": user_profile.username,
+                    "email": user_profile.email,
+                    "phoneNumber": user_profile.phoneNumber,
+                }
+            except UserProfile.DoesNotExist:
+                user_info = {"username": "Unknown", "email": "N/A", "phoneNumber": "N/A"}
+
+            booked_data.append({
+                "start_date": booking.start_date,
+                "end_date": booking.end_date,
+                "user": user_info
+            })
+
+        return booked_data
 
 
 class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
-        fields = "__all__"
+        fields = ["id", "venue", "start_date", "end_date", "user", "user_info"]
+
+    def get_user_info(self, obj):
+        try:
+            user_profile = UserProfile.objects.get(id=obj.user.id)
+            return {
+                "username": user_profile.username,
+                "email": user_profile.email,
+                "phoneNumber": user_profile.phoneNumber,
+            }
+        except UserProfile.DoesNotExist:
+            return {"username": "Unknown", "email": "N/A", "phoneNumber": "N/A"}
 
     def validate(self, data):
         venue = data["venue"]
@@ -84,6 +111,7 @@ class BookingSerializer(serializers.ModelSerializer):
         ).exists()
 
         if existing_booking:
-            raise serializers.ValidationError("This venue is already booked for the selected dates.")
+            raise serializers.ValidationError(
+                "This venue is already booked for the selected dates.")
 
         return data

@@ -86,7 +86,10 @@ function L_Form({ route, redirectTo }) {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <h1>Welcome to EventSpace</h1>
-          <p>Effortlessly book the perfect venue for every occasion and create unforgettable memories!</p>
+          <p>
+            Effortlessly book the perfect venue for every occasion and create
+            unforgettable memories!
+          </p>
         </motion.div>
       </div>
 
@@ -97,11 +100,7 @@ function L_Form({ route, redirectTo }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-                              {message && (
-                        <div className="auth-message">
-                            ⚠️ {message}
-                        </div>
-                    )}
+          {message && <div className="auth-message">⚠️ {message}</div>}
           <h2>{name} your Account</h2>
           <p className="auth-subtitle">It's quick and easy.</p>
 
