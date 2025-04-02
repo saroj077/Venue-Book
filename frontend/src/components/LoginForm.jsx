@@ -50,7 +50,7 @@ function L_Form({ route, redirectTo }) {
         // Check if response.data exists and has is_venue_owner
 
         if (response.data.is_venue_owner) {
-          navigate("/register-venue");
+          navigate("/venue");
         } else {
           navigate("/home");
         }
